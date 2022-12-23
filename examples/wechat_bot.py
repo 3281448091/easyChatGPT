@@ -19,11 +19,10 @@ class MyBot(Wechaty):
     async def on_message(self, msg : wechaty.Message):
         print(type(msg))
         print(msg.room())
-        #if msg.text().startswith("@懒懒"):
 
         # replies to every message
         talker = msg.talker() if msg.room() is None else msg.room()
-        reply = chat.interact(msg.text().replace("@懒懒", ""))
+        reply = chat.interact(msg.text())
         print(reply)
         await talker.say(reply)
 
