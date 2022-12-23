@@ -1,8 +1,11 @@
 import time
+from typing import List
+
 import undetected_chromedriver as uc
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
 
 
 class ChatClient:
@@ -19,14 +22,16 @@ class ChatClient:
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
 
-    def __log(self, msg : str):
-        print(msg)
-        pass
+    def __log(self, msg : str) -> None:
+        if self.verbose:
+            print(msg)
 
     def __init__(self, username: str, password: str,
-                 headless: bool = False):
+                 headless: bool = False, verbose : bool = True) -> None:
 
         # initializing undetected-driver to prevent cloudflare bot detection
+        if verbose:
+            self.verbose = True
         options = uc.ChromeOptions()
         options.add_argument("--incognito")
         if headless:
@@ -38,7 +43,7 @@ class ChatClient:
         self.__log("Browser successfully launched, logging in to account...")
         self.__login(username, password)
 
-    def __login(self, username: str, password: str):
+    def __login(self, username: str, password: str) -> None:
         """To enter system"""
         # Find login button, click it
 
@@ -86,7 +91,7 @@ class ChatClient:
         continue_button.click()
         time.sleep(1)
 
-    def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1):
+    def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1) -> List[WebElement]:
         """If the loading time is a concern, this function helps"""
         for _ in range(attempt_count):
             item = self.browser.find_elements(by, query)

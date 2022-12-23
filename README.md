@@ -18,6 +18,7 @@ Copy the .env file and put in your openai email and password
 cp .env.example .env
 ```
 
+Simple Usuage
 ```python
 from easychatgpt.chatgpt import ChatClient
 import os
