@@ -4,6 +4,9 @@
 
 ## Install
 
+You must install ffmpeg and ffprobe too to make the audio recognition work.
+https://bbc.github.io/bbcat-orchestration-docs/installation-windows/
+
 ```pip install easychatgpt```
 
 ## Features
