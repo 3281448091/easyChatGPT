@@ -4,7 +4,7 @@ from wechaty_puppet_itchat import PuppetItChat
 from wechaty_puppet import PuppetOptions
 from wechaty import Wechaty, WechatyOptions, wechaty
 
-from src.easychatgpt.chatgpt import ChatClient
+from easychatgpt.chatgpt import ChatClient
 
 import os
 

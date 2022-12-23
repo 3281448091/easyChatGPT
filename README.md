@@ -6,10 +6,20 @@
 
 ```pip install easychatgpt```
 
+## Features
+
+- [x] Bypass Cloudflare's anti-bot protection using `undetected_chromedriver`
+- [x] Audio Recaptcha solver
+
 ## Usage
 
+Copy the .env file and put in your openai email and password
+```bash
+cp .env.example .env
+```
+
 ```python
-from easychatgpt import ChatClient
+from easychatgpt.chatgpt import ChatClient
 import os
 
 OPENAI_EMAIL = os.getenv("OPENAI_EMAIL")
@@ -21,3 +31,9 @@ answer = chat.interact("Introduce your self")
 
 print(answer)
 ```
+
+
+## TODOS
+1. Headless Support
+2. Session login
+3. Rapid Deploys
