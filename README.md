@@ -1,4 +1,4 @@
-## EasyChatGpt
+## EasyChatGPT
 
 > An unofficial yet elegant interface of the ChatGPT API using browser automation that bypasses cloudflare detection and recaptchas.
 
