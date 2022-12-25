@@ -3,3 +3,4 @@ venv/
 .env
 .idea
 .DS_Store
+auto_upload_to_pip.sh

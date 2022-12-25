@@ -23,7 +23,7 @@ cp .env.example .env
 
 Simple Usuage
 ```python
-from easychatgpt.chatgpt import ChatClient
+from easychatgpt import ChatClient
 import os
 
 OPENAI_EMAIL = os.getenv("OPENAI_EMAIL")
