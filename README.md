@@ -1,27 +1,48 @@
-## EasyChatGPT
 
-> An unofficial yet elegant interface of the ChatGPT API using browser automation that bypasses cloudflare detection and recaptchas.
+# EasyChatGPT
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-## Install
-
-You must install ffmpeg and ffprobe too to make the audio recognition work.
-https://bbc.github.io/bbcat-orchestration-docs/installation-windows/
-
-```pip install easychatgpt```
-
+An unofficial yet elegant interface of the ChatGPT API using browser automation that bypasses cloudflare detection and recaptchas.
 ## Features
 
 - [x] Bypass Cloudflare's anti-bot protection using `undetected_chromedriver`
-- [x] Audio Recaptcha solver
+- [x] Complementary and fast Audio Recaptcha solver using the `pypasser` library.
 
-## Usage
+
+
+## Installation
+
+You must **install** ffmpeg and ffprobe on your machine before running.
+
+[Install On Windows](https://phoenixnap.com/kb/ffmpeg-windows)\
+[Install On Linux](https://www.golinuxcloud.com/ubuntu-install-ffprobe/)\
+[Install On MacOS](https://bbc.github.io/bbcat-orchestration-docs/installation-mac-manual/)
+
+Install the offical easyChatGPT package
+```bash
+pip install easychatgpt
+```
+
+
+    
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`OPENAI_EMAIL`
+
+`OPENAI_PASSWORD`
 
 Copy the .env file and put in your openai email and password
-```bash
+```
 cp .env.example .env
 ```
 
-Simple Usuage
+
+## Usage / Demo
+
+Simple Usage
+
 ```python
 from easychatgpt import ChatClient
 import os
@@ -36,8 +57,8 @@ answer = chat.interact("Introduce your self")
 print(answer)
 ```
 
+[More examples to look at](https://github.com/LanLan69/easyChatGPT/tree/main/examples)
+## Acknowledgement
 
-## TODOS
-1. Headless Support
-2. Session login
-3. Rapid Deploys
+[ChatGPT_Selenium](https://github.com/ugorsahin/ChatGPT_Selenium)\
+[PyPasser](https://github.com/xHossein/PyPasser)
