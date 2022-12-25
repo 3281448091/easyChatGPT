@@ -1,6 +1,12 @@
 from setuptools import find_packages
 from setuptools import setup
 
+"""
+python3 -m pip install --upgrade build
+python3 -m build
+python3 -m pip install --upgrade twine
+python3 -m twine upload --repository testpypi dist/*
+"""
 setup(
     name="easychatgpt",
     version="0.0.2",
@@ -16,6 +22,7 @@ setup(
         "selenium~=4.7.2",
         "undetected-chromedriver~=3.1.7",
         "pypasser",
+        "pocketsphinx",
     ],
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
