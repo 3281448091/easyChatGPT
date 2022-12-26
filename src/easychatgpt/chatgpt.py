@@ -183,7 +183,6 @@ class ChatClient:
 
     def switch_thread(self, name):
         """the thread is switched to the thread that goes by the name specified"""
-        fail = 0
         try:
             self.browser.find_element(By.XPATH, (self.thread_xq + self.text_xq.format(name))).click()
             self.__log("Thread {} selected".format(name))
@@ -193,13 +192,11 @@ class ChatClient:
                 self.browser.find_element(By.XPATH, (self.thread_selected_xq + self.text_xq.format(name))).click()
                 self.__log("Thread {} already selected".format(name))
             except Exception as e:
-                self.__log("An error occurred: Thread could not be found")
-                traceback.print_exc()
-                fail = 1
+                self.__log("Thread could not be found")
+                raise
 
         except Exception as e:
-            traceback.print_exc()
-            fail = 1
+            raise
 
         else:
             # selected another thread, lets make sure its usable before we continue
@@ -209,19 +206,11 @@ class ChatClient:
 
     def delete_thread(self):
         """delete the current thread"""
-        fail = 0
-        try:
-            self.browser.find_element(By.XPATH, self.thread_selected_xq).click()
-        except Exception as e:
-            self.__log("An error occurred: Selected thread not found")
-            traceback.print_exc()
-            fail = 1
-        else:
-            buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
-            delete_button = buttons[1]
-            delete_button.click()
+        self.browser.find_element(By.XPATH, self.thread_selected_xq).click()
+        buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        delete_button = buttons[1]
+        delete_button.click()
 
-            confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
-            confirm_button = confirm_buttons[0]
-            confirm_button.click()
-        return fail
+        confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        confirm_button = confirm_buttons[0]
+        confirm_button.click()
