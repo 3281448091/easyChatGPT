@@ -1,5 +1,6 @@
 import asyncio
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
@@ -9,6 +10,8 @@ from threading import Thread
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
+
 
 from easychatgpt.exceptions import NotEnoughInformationException, CouldNotSolveCaptcha
 
@@ -28,6 +31,8 @@ class ChatClient:
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
+    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
+    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]//*[text()="{}"]'
 
     def __log(self, msg: str) -> None:
         if self.verbose:
@@ -173,3 +178,29 @@ class ChatClient:
             print(f"There is no tab with index {idx}")
             return
         self.browser.switch_to.window(windows[idx])
+
+    def switch_thread(self, name):
+        """the thread is switched to the thread that goes by the name specified"""
+        fail = 0
+        try:
+            self.browser.find_element(By.XPATH, self.thread_xq.format(name)).click()
+            self.__log("Thread {} selected".format(name))
+
+        except NoSuchElementException:
+            try:
+                self.browser.find_element(By.XPATH, self.thread_selected_xq.format(name)).click()
+                self.__log("Thread {} already selected".format(name))
+            except Exception as e:
+                self.__log("An error occurred: Thread could not be found")
+                traceback.print_exc()
+                fail = 1
+
+        except Exception as e:
+            traceback.print_exc()
+            fail = 1
+
+        else:
+            # selected another thread, lets make sure its usable before we continue
+            chat_box = self.__sleepy_find_element(By.XPATH, self.chatbox_cq)
+
+        return fail
