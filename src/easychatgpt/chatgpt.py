@@ -7,16 +7,18 @@ import undetected_chromedriver as uc
 
 from threading import Thread
 
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from easychatgpt.exceptions import NotEnoughInformationException, CouldNotSolveCaptcha
+
 executor = ThreadPoolExecutor(10)
+
 
 class ChatClient:
     """Handler class to interact with ChatGPT"""
 
-    #Paths for elements
+    # Paths for elements
     login_xq = '//button[text()="Log in"]'
     continue_xq = '//button[text()="Continue"]'
     next_xq = '//button[text()="Next"]'
@@ -28,17 +30,17 @@ class ChatClient:
     reset_xq = '//a[text()="New Chat"]'
     thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
 
-    def __log(self, msg : str) -> None:
+    def __log(self, msg: str) -> None:
         if self.verbose:
             print(msg)
 
-    def update_session(self, interval : int = 10) -> None:
+    def update_session(self, interval: int = 10) -> None:
         """override the Local Storage getSession to fool OpenAI's script to not show a Login Expired message. Creds to Rowa"""
         while True:
-            kv = '{"event":"session","data":{"trigger":"getSession"},"timestamp":'+str(round(time.time()))+'}'
+            kv = '{"event":"session","data":{"trigger":"getSession"},"timestamp":' + str(round(time.time())) + '}'
 
             try:
-            # window.localStorage.setItem('nextauth.message', '{"event":"session","data":{"trigger":"getSession"},"timestamp":'1672014120'}')
+                # window.localStorage.setItem('nextauth.message', '{"event":"session","data":{"trigger":"getSession"},"timestamp":'1672014120'}')
                 self.browser.execute_script(f"window.localStorage.setItem('nextauth.message', '{kv}')")
             except:
                 pass
@@ -47,17 +49,21 @@ class ChatClient:
 
             time.sleep(interval)
 
-
     def __init__(self, username: str, password: str,
-                 headless: bool = False, verbose : bool = True) -> None:
-
+                 headless: bool = False, verbose: bool = True) -> None:
 
         # initializing undetected-driver to prevent cloudflare bot detection
 
-        #class="big-button pow-button"
+        # TODO cloudlfare if you are a bot detection also auto update to pypi add exceptions too
+
+        # class="big-button pow-button"
+
+        if username is None or password is None:
+            raise NotEnoughInformationException("You did not input username or password")
 
         if verbose:
             self.verbose = True
+
         options = uc.ChromeOptions()
         options.add_argument("--incognito")
         if headless:
@@ -72,8 +78,6 @@ class ChatClient:
         t.setDaemon(True)
         t.start()
 
-
-
         self.__login(username, password)
 
     def __login(self, username: str, password: str) -> None:
@@ -81,8 +85,6 @@ class ChatClient:
         # Find login button, click it
 
         # bypass announcement popup
-
-
 
         self.browser.execute_script("""
         window.localStorage.setItem('oai/apps/hasSeenOnboarding/chat', 'true');
@@ -107,14 +109,13 @@ class ChatClient:
         from pypasser import reCaptchaV2
 
         # Create an instance of webdriver and open the page has recaptcha v2
-        # ...
 
         # pass the driver to reCaptchaV2
         is_checked = reCaptchaV2(self.browser, play=False)  # it returns bool
         if not is_checked:
-            raise Exception("Coult not solve reCaptchaV2")
+            raise CouldNotSolveCaptcha("Unexpected error occured while solving captcha")
+
         self.__log("reCaptchaV2 is solved")
-        # input("solved captcha?")
 
         # Click continue
         continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
