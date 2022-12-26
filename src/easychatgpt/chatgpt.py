@@ -1,5 +1,6 @@
 import asyncio
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
@@ -180,6 +181,7 @@ class ChatClient:
 
     def switch_thread(self, name):
         """the thread is switched to the thread that goes by the name specified"""
+        fail = 0
         try:
             self.browser.find_element(By.XPATH, self.thread_xq.format(name)).click()
             self.__log("Thread {} selected".format(name))
@@ -190,7 +192,15 @@ class ChatClient:
                 self.__log("Thread {} already selected".format(name))
             except Exception as e:
                 self.__log("An error occurred: Thread could not be found")
-                printStackTrace(e)
+                traceback.print_exc()
+                fail = 1
 
         except Exception as e:
-            printStackTrace(e)
+            traceback.print_exc()
+            fail = 1
+
+        else:
+            # selected another thread, lets make sure its usable before we continue
+            chat_box = self.__sleepy_find_element(By.XPATH, self.chatbox_cq)
+
+        return fail
