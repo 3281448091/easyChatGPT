@@ -29,6 +29,7 @@ class ChatClient:
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
     thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
+    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]//*[text()="{}"]'
 
     def __log(self, msg: str) -> None:
         if self.verbose:
