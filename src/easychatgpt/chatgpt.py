@@ -31,8 +31,10 @@ class ChatClient:
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
-    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
-    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]//*[text()="{}"]'
+    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]'
+    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]'
+    thread_buttons_xq = '//button[@class="p-1 hover:text-white"]'
+    text_xq = '//*[text()="{}"]' # append and format to search text field
 
     def __log(self, msg: str) -> None:
         if self.verbose:
@@ -183,12 +185,12 @@ class ChatClient:
         """the thread is switched to the thread that goes by the name specified"""
         fail = 0
         try:
-            self.browser.find_element(By.XPATH, self.thread_xq.format(name)).click()
+            self.browser.find_element(By.XPATH, (self.thread_xq + self.text_xq.format(name))).click()
             self.__log("Thread {} selected".format(name))
 
         except NoSuchElementException:
             try:
-                self.browser.find_element(By.XPATH, self.thread_selected_xq.format(name)).click()
+                self.browser.find_element(By.XPATH, (self.thread_selected_xq + self.text_xq.format(name))).click()
                 self.__log("Thread {} already selected".format(name))
             except Exception as e:
                 self.__log("An error occurred: Thread could not be found")
@@ -203,4 +205,23 @@ class ChatClient:
             # selected another thread, lets make sure its usable before we continue
             chat_box = self.__sleepy_find_element(By.XPATH, self.chatbox_cq)
 
+        return fail
+
+    def delete_thread(self):
+        """delete the current thread"""
+        fail = 0
+        try:
+            self.browser.find_element(By.XPATH, self.thread_selected_xq).click()
+        except Exception as e:
+            self.__log("An error occurred: Selected thread not found")
+            traceback.print_exc()
+            fail = 1
+        else:
+            buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+            delete_button = buttons[1]
+            delete_button.click()
+
+            confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+            confirm_button = confirm_buttons[0]
+            confirm_button.click()
         return fail
