@@ -1,15 +1,9 @@
 from setuptools import find_packages
 from setuptools import setup
 
-"""
-python3 -m pip install --upgrade build
-python3 -m build
-python3 -m pip install --upgrade twine
-python3 -m twine upload --repository pypi dist/*
-"""
 setup(
     name="easychatgpt",
-    version="0.0.5",
+    version="0.0.6",
     license="GNU General Public License v2.0",
     author="LanLan",
     author_email="3281448091@proton.me",
