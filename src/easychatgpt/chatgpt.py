@@ -26,6 +26,7 @@ class ChatClient:
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
+    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
 
     def __log(self, msg : str) -> None:
         if self.verbose:
@@ -172,3 +173,20 @@ class ChatClient:
             print(f"There is no tab with index {idx}")
             return
         self.browser.switch_to.window(windows[idx])
+
+    def switch_thread(self, name):
+        """the thread is switched to the thread that goes by the name specified"""
+        try:
+            self.browser.find_element(By.XPATH, self.thread_xq.format(name)).click()
+            self.__log("Thread {} selected".format(name))
+
+        except NoSuchElementException:
+            try:
+                self.browser.find_element(By.XPATH, self.thread_selected_xq.format(name)).click()
+                self.__log("Thread {} already selected".format(name))
+            except Exception as e:
+                self.__log("An error occurred: Thread could not be found")
+                printStackTrace(e)
+
+        except Exception as e:
+            printStackTrace(e)
