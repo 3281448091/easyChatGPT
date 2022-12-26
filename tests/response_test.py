@@ -1,5 +1,3 @@
-import time
-
 from src.easychatgpt.chatgpt import ChatClient
 from dotenv import load_dotenv
 import os
