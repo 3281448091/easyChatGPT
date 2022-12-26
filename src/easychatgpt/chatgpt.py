@@ -182,7 +182,12 @@ class ChatClient:
         self.browser.switch_to.window(windows[idx])
 
     def switch_thread(self, name):
-        """the thread is switched to the thread that goes by the name specified"""
+        """
+        The thread is switched to the thread that goes by the name specified
+        NOTE: When a new thread is created and then you switch to another thread immediately
+                it interrupts the autonaming of the thread, which makes the name 'New Chat'
+        """
+
         try:
             # this will give an error if thread currently selected
             # as currently selected thread is under a different xpath
@@ -215,6 +220,22 @@ class ChatClient:
         buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
         delete_button = buttons[1]
         delete_button.click()
+
+        confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        confirm_button = confirm_buttons[0]
+        confirm_button.click()
+
+    def edit_thread_name(self, name):
+        """changes the name of the current thread"""
+        self.browser.find_element(By.XPATH, self.thread_selected_xq).click() 
+        buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        edit_button = buttons[0]
+        edit_button.click()
+
+        edit_field_xq = '//*[@class = "text-sm border-none bg-transparent p-0 m-0 w-full mr-0"]'
+        edit_field = self.__sleepy_find_element(By.XPATH, edit_field_xq)
+        edit_field.send_keys(Keys.CONTROL + "a", Keys.DELETE)
+        edit_field.send_keys(name)
 
         confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
         confirm_button = confirm_buttons[0]
