@@ -184,9 +184,12 @@ class ChatClient:
     def switch_thread(self, name):
         """the thread is switched to the thread that goes by the name specified"""
         try:
+            # this will give an error if thread currently selected
+            # as currently selected thread is under a different xpath
             self.browser.find_element(By.XPATH, (self.thread_xq + self.text_xq.format(name))).click()
             self.__log("Thread {} selected".format(name))
 
+        # in this case, the thread could be currently selected, so we check for that
         except NoSuchElementException:
             try:
                 self.browser.find_element(By.XPATH, (self.thread_selected_xq + self.text_xq.format(name))).click()
@@ -200,13 +203,15 @@ class ChatClient:
 
         else:
             # selected another thread, lets make sure its usable before we continue
+            # NOTE: for some reason it takes a little too long to continue from this
+            #       point. Not sure if it is because it really takes that long for
+            #       the chatbox to become available.
             chat_box = self.__sleepy_find_element(By.XPATH, self.chatbox_cq)
-
-        return fail
 
     def delete_thread(self):
         """delete the current thread"""
-        self.browser.find_element(By.XPATH, self.thread_selected_xq).click()
+        # make sure a thread is selected
+        self.browser.find_element(By.XPATH, self.thread_selected_xq).click() 
         buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
         delete_button = buttons[1]
         delete_button.click()
