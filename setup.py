@@ -9,7 +9,7 @@ python3 -m twine upload --repository pypi dist/*
 """
 setup(
     name="easychatgpt",
-    version="0.0.3",
+    version="0.0.4",
     license="GNU General Public License v2.0",
     author="LanLan",
     author_email="3281448091@proton.me",
