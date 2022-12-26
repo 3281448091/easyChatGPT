@@ -1,12 +1,17 @@
+import asyncio
 import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
 import undetected_chromedriver as uc
 
+from threading import Thread
+
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webelement import WebElement
 
+executor = ThreadPoolExecutor(10)
 
 class ChatClient:
     """Handler class to interact with ChatGPT"""
@@ -26,10 +31,30 @@ class ChatClient:
         if self.verbose:
             print(msg)
 
+    def update_session(self, interval : int = 10) -> None:
+        """override the Local Storage getSession to fool OpenAI's script to not show a Login Expired message. Creds to Rowa"""
+        while True:
+            kv = '{"event":"session","data":{"trigger":"getSession"},"timestamp":'+str(round(time.time()))+'}'
+
+            try:
+            # window.localStorage.setItem('nextauth.message', '{"event":"session","data":{"trigger":"getSession"},"timestamp":'1672014120'}')
+                self.browser.execute_script(f"window.localStorage.setItem('nextauth.message', '{kv}')")
+            except:
+                pass
+
+            self.__log("Updated session")
+
+            time.sleep(interval)
+
+
     def __init__(self, username: str, password: str,
                  headless: bool = False, verbose : bool = True) -> None:
 
+
         # initializing undetected-driver to prevent cloudflare bot detection
+
+        #class="big-button pow-button"
+
         if verbose:
             self.verbose = True
         options = uc.ChromeOptions()
@@ -41,6 +66,13 @@ class ChatClient:
 
         self.browser.get("https://chat.openai.com/chat")
         self.__log("Browser successfully launched, logging in to account...")
+
+        t = Thread(target=self.update_session)
+        t.setDaemon(True)
+        t.start()
+
+
+
         self.__login(username, password)
 
     def __login(self, username: str, password: str) -> None:
@@ -48,6 +80,9 @@ class ChatClient:
         # Find login button, click it
 
         # bypass announcement popup
+
+
+
         self.browser.execute_script("""
         window.localStorage.setItem('oai/apps/hasSeenOnboarding/chat', 'true');
         window.localStorage.setItem(
@@ -75,6 +110,8 @@ class ChatClient:
 
         # pass the driver to reCaptchaV2
         is_checked = reCaptchaV2(self.browser, play=False)  # it returns bool
+        if not is_checked:
+            raise Exception("Coult not solve reCaptchaV2")
         self.__log("reCaptchaV2 is solved")
         # input("solved captcha?")
 
@@ -91,7 +128,7 @@ class ChatClient:
         continue_button.click()
         time.sleep(1)
 
-    def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1) -> List[WebElement]:
+    def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1):
         """If the loading time is a concern, this function helps"""
         for _ in range(attempt_count):
             item = self.browser.find_elements(by, query)

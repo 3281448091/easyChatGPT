@@ -46,7 +46,10 @@ Simple Usage
 ```python
 from easychatgpt import ChatClient
 import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 OPENAI_EMAIL = os.getenv("OPENAI_EMAIL")
 OPENAI_PASSWORD = os.getenv("OPENAI_PASSWORD")
 
