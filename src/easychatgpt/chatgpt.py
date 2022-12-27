@@ -31,8 +31,10 @@ class ChatClient:
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
-    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]//*[text()="{}"]' # format with thread name before use
-    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]//*[text()="{}"]'
+    thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]'
+    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]'
+    thread_buttons_xq = '//button[@class="p-1 hover:text-white"]'
+    text_xq = '//*[text()="{}"]' # append and format to search text field
 
     def __log(self, msg: str) -> None:
         if self.verbose:
@@ -180,27 +182,61 @@ class ChatClient:
         self.browser.switch_to.window(windows[idx])
 
     def switch_thread(self, name):
-        """the thread is switched to the thread that goes by the name specified"""
-        fail = 0
+        """
+        The thread is switched to the thread that goes by the name specified
+        NOTE: When a new thread is created and then you switch to another thread immediately
+                it interrupts the autonaming of the thread, which makes the name 'New Chat'
+        """
+
         try:
-            self.browser.find_element(By.XPATH, self.thread_xq.format(name)).click()
+            # this will give an error if thread currently selected
+            # as currently selected thread is under a different xpath
+            self.browser.find_element(By.XPATH, (self.thread_xq + self.text_xq.format(name))).click()
             self.__log("Thread {} selected".format(name))
 
+        # in this case, the thread could be currently selected, so we check for that
         except NoSuchElementException:
             try:
-                self.browser.find_element(By.XPATH, self.thread_selected_xq.format(name)).click()
+                self.browser.find_element(By.XPATH, (self.thread_selected_xq + self.text_xq.format(name))).click()
                 self.__log("Thread {} already selected".format(name))
             except Exception as e:
-                self.__log("An error occurred: Thread could not be found")
-                traceback.print_exc()
-                fail = 1
+                self.__log("Thread could not be found")
+                raise
 
         except Exception as e:
-            traceback.print_exc()
-            fail = 1
+            raise
 
         else:
             # selected another thread, lets make sure its usable before we continue
+            # NOTE: for some reason it takes a little too long to continue from this
+            #       point. Not sure if it is because it really takes that long for
+            #       the chatbox to become available.
             chat_box = self.__sleepy_find_element(By.XPATH, self.chatbox_cq)
 
-        return fail
+    def delete_thread(self):
+        """delete the current thread"""
+        # make sure a thread is selected
+        self.browser.find_element(By.XPATH, self.thread_selected_xq).click() 
+        buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        delete_button = buttons[1]
+        delete_button.click()
+
+        confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        confirm_button = confirm_buttons[0]
+        confirm_button.click()
+
+    def edit_thread_name(self, name):
+        """changes the name of the current thread"""
+        self.browser.find_element(By.XPATH, self.thread_selected_xq).click() 
+        buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        edit_button = buttons[0]
+        edit_button.click()
+
+        edit_field_xq = '//*[@class = "text-sm border-none bg-transparent p-0 m-0 w-full mr-0"]'
+        edit_field = self.__sleepy_find_element(By.XPATH, edit_field_xq)
+        edit_field.send_keys(Keys.CONTROL + "a", Keys.DELETE)
+        edit_field.send_keys(name)
+
+        confirm_buttons = self.browser.find_elements(By.XPATH, self.thread_buttons_xq)
+        confirm_button = confirm_buttons[0]
+        confirm_button.click()
