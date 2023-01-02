@@ -18,7 +18,7 @@ You must **install** ffmpeg and ffprobe on your machine before running.
 [Install On Linux](https://www.golinuxcloud.com/ubuntu-install-ffprobe/)\
 [Install On MacOS](https://bbc.github.io/bbcat-orchestration-docs/installation-mac-manual/)
 
-Install the offical easyChatGPT package
+Install the official easyChatGPT package
 ```bash
 pip install easychatgpt
 ```
