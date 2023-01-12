@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="easychatgpt",
-    version="0.0.7",
+    version="0.0.8",
     license="GNU General Public License v2.0",
     author="LanLan",
     author_email="3281448091@proton.me",
