@@ -56,7 +56,7 @@ class ChatClient:
             time.sleep(interval)
 
     def __init__(self, username: str, password: str,
-                 headless: bool = False, verbose: bool = True) -> None:
+                 headless: bool = False, verbose: bool = True, chrome_version: int = 0) -> None:
 
         # initializing undetected-driver to prevent cloudflare bot detection
 
@@ -74,7 +74,9 @@ class ChatClient:
         options.add_argument("--incognito")
         if headless:
             options.add_argument("--headless")
-        self.browser = uc.Chrome(options=options)
+        
+        # when version_main set to 0, works as though no version was supplied, uses defaut
+        self.browser = uc.Chrome(options=options, version_main=chrome_version)
         self.browser.set_page_load_timeout(15)
 
         self.browser.get("https://chat.openai.com/chat")
