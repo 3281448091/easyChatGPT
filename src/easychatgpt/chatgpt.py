@@ -32,7 +32,7 @@ class ChatClient:
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
     thread_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group"]'
-    thread_selected_xq = '//*[@class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group"]'
+    thread_selected_xq = '//*[starts-with(@class, "flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group")]'
     thread_buttons_xq = '//button[@class="p-1 hover:text-white"]'
     text_xq = '//*[text()="{}"]' # append and format to search text field
 
