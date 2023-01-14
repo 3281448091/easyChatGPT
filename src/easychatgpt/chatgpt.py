@@ -23,6 +23,7 @@ class ChatClient:
 
     # Paths for elements
     login_xq = '//button[text()="Log in"]'
+    google_login_xq = '//button[@class="c5b8edce6 c426c38e7 c723b33d7"]'
     continue_xq = '//button[text()="Continue"]'
     next_xq = '//button[text()="Next"]'
     done_xq = '//button[text()="Done"]'
@@ -56,7 +57,7 @@ class ChatClient:
             time.sleep(interval)
 
     def __init__(self, username: str, password: str,
-                 headless: bool = False, verbose: bool = True, chrome_version: int = 0) -> None:
+                 google: bool = False, headless: bool = False, verbose: bool = True, chrome_version: int = 0) -> None:
 
         # initializing undetected-driver to prevent cloudflare bot detection
 
@@ -86,7 +87,37 @@ class ChatClient:
         t.setDaemon(True)
         t.start()
 
-        self.__login(username, password)
+        self.__google_login(username, password) if google else self.__login(username, password)
+    def __google_login(self, username: str, password: str):
+        self.browser.execute_script("""
+        window.localStorage.setItem('oai/apps/hasSeenOnboarding/chat', 'true');
+        window.localStorage.setItem(
+          'oai/apps/hasSeenReleaseAnnouncement/2022-12-15',
+          'true'
+        ); 
+        window.localStorage.setItem(
+          'oai/apps/hasSeenReleaseAnnouncement/2022-12-19',
+          'true'
+        ); """)
+
+        login_button = self.__sleepy_find_element(By.XPATH, self.login_xq)
+        login_button.click()
+
+        glogin_button = self.__sleepy_find_element(By.XPATH, self.google_login_xq)
+        glogin_button.click()
+
+        # Find email textbox, enter e-mail
+        email_box = self.__sleepy_find_element(By.ID, "identifierId")
+        email_box.send_keys(username)
+
+        next_button = self.__sleepy_find_element(By.XPATH, "//span[text()='Next']")
+        next_button.click()
+
+        password_box = self.__sleepy_find_element(By.XPATH, "//input[contains(@name, 'password')]")
+        password_box.send_keys(password)
+
+        next_button = self.__sleepy_find_element(By.XPATH, "//span[text()='Next']")
+        next_button.click()
 
     def __login(self, username: str, password: str) -> None:
         """To enter system"""
