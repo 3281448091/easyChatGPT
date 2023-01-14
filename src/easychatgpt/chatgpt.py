@@ -118,6 +118,7 @@ class ChatClient:
 
         next_button = self.__sleepy_find_element(By.XPATH, "//span[text()='Next']")
         next_button.click()
+        time.sleep(1)
 
     def __login(self, username: str, password: str) -> None:
         """To enter system"""
