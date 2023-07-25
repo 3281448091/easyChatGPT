@@ -26,7 +26,6 @@ class ChatClient:
     next_xq = '//button/div[text()="Next"]'
     done_xq = '//button/div[text()="Done"]'
 
-    chatbox_cq = 'text-sm'
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
@@ -146,8 +145,7 @@ class ChatClient:
             text_area.send_keys(Keys.SHIFT + Keys.ENTER)
         text_area.send_keys(Keys.RETURN)
         self.__wait_to_disappear(By.CLASS_NAME, self.wait_cq)
-        box = self.browser.find_elements(By.CLASS_NAME, self.chatbox_cq)[0]
-        answer = box.find_elements(By.CLASS_NAME, self.answer_cq)[-1]
+        answer = self.browser.find_elements(By.CLASS_NAME, self.answer_cq)[-1]
         self.__log("Got response... ")
         return answer.text
 
