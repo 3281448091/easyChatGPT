@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
 
-from easychatgpt.exceptions import NotEnoughInformationException, CouldNotSolveCaptcha
+from easychatgpt.exceptions import NotEnoughInformationException
 
 executor = ThreadPoolExecutor(10)
 
@@ -22,12 +22,10 @@ class ChatClient:
     """Handler class to interact with ChatGPT"""
 
     # Paths for elements
-    login_xq = '//button[text()="Log in"]'
-    continue_xq = '//button[text()="Continue"]'
-    next_xq = '//button[text()="Next"]'
-    done_xq = '//button[text()="Done"]'
+    login_xq = '//button/div[text()="Log in"]'
+    next_xq = '//button/div[text()="Next"]'
+    done_xq = '//button/div[text()="Done"]'
 
-    chatbox_cq = 'text-sm'
     answer_cq = 'group'
     wait_cq = 'text-2xl'
     reset_xq = '//a[text()="New Chat"]'
@@ -112,31 +110,12 @@ class ChatClient:
         # Find email textbox, enter e-mail
         email_box = self.__sleepy_find_element(By.ID, "username")
         email_box.send_keys(username)
-
-        # solve recaptcha
-        from pypasser import reCaptchaV2
-
-        # Create an instance of webdriver and open the page has recaptcha v2
-
-        # pass the driver to reCaptchaV2
-        is_checked = reCaptchaV2(self.browser, play=False)  # it returns bool
-        if not is_checked:
-            raise CouldNotSolveCaptcha("Unexpected error occured while solving captcha")
-
-        self.__log("reCaptchaV2 is solved")
-
-        # Click continue
-        continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
-        continue_button.click()
-        time.sleep(1)
+        pass_box.send_keys(Keys.ENTER)
 
         # Find password textbox, enter password
         pass_box = self.__sleepy_find_element(By.ID, "password")
         pass_box.send_keys(password)
-        # Click continue
-        continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
-        continue_button.click()
-        time.sleep(1)
+        pass_box.send_keys(Keys.ENTER)
 
     def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1):
         """If the loading time is a concern, this function helps"""
@@ -166,8 +145,7 @@ class ChatClient:
             text_area.send_keys(Keys.SHIFT + Keys.ENTER)
         text_area.send_keys(Keys.RETURN)
         self.__wait_to_disappear(By.CLASS_NAME, self.wait_cq)
-        box = self.browser.find_elements(By.CLASS_NAME, self.chatbox_cq)[0]
-        answer = box.find_elements(By.CLASS_NAME, self.answer_cq)[-1]
+        answer = self.browser.find_elements(By.CLASS_NAME, self.answer_cq)[-1]
         self.__log("Got response... ")
         return answer.text
 
