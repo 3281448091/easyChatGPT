@@ -23,7 +23,6 @@ class ChatClient:
 
     # Paths for elements
     login_xq = '//button/div[text()="Log in"]'
-    continue_xq = '//button[text()="Continue"]'
     next_xq = '//button/div[text()="Next"]'
     done_xq = '//button/div[text()="Done"]'
 
@@ -112,19 +111,12 @@ class ChatClient:
         # Find email textbox, enter e-mail
         email_box = self.__sleepy_find_element(By.ID, "username")
         email_box.send_keys(username)
-
-        # Click continue
-        continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
-        continue_button.click()
-        time.sleep(1)
+        pass_box.send_keys(Keys.ENTER)
 
         # Find password textbox, enter password
         pass_box = self.__sleepy_find_element(By.ID, "password")
         pass_box.send_keys(password)
-        # Click continue
-        continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
-        continue_button.click()
-        time.sleep(1)
+        pass_box.send_keys(Keys.ENTER)
 
     def __sleepy_find_element(self, by, query, attempt_count: int = 20, sleep_duration: int = 1):
         """If the loading time is a concern, this function helps"""
