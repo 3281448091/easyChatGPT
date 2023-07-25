@@ -22,10 +22,10 @@ class ChatClient:
     """Handler class to interact with ChatGPT"""
 
     # Paths for elements
-    login_xq = '//button[text()="Log in"]'
+    login_xq = '//button/div[text()="Log in"]'
     continue_xq = '//button[text()="Continue"]'
-    next_xq = '//button[text()="Next"]'
-    done_xq = '//button[text()="Done"]'
+    next_xq = '//button/div[text()="Next"]'
+    done_xq = '//button/div[text()="Done"]'
 
     chatbox_cq = 'text-sm'
     answer_cq = 'group'
