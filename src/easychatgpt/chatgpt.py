@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
 
-from easychatgpt.exceptions import NotEnoughInformationException, CouldNotSolveCaptcha
+from easychatgpt.exceptions import NotEnoughInformationException
 
 executor = ThreadPoolExecutor(10)
 
@@ -112,18 +112,6 @@ class ChatClient:
         # Find email textbox, enter e-mail
         email_box = self.__sleepy_find_element(By.ID, "username")
         email_box.send_keys(username)
-
-        # solve recaptcha
-        from pypasser import reCaptchaV2
-
-        # Create an instance of webdriver and open the page has recaptcha v2
-
-        # pass the driver to reCaptchaV2
-        is_checked = reCaptchaV2(self.browser, play=False)  # it returns bool
-        if not is_checked:
-            raise CouldNotSolveCaptcha("Unexpected error occured while solving captcha")
-
-        self.__log("reCaptchaV2 is solved")
 
         # Click continue
         continue_button = self.__sleepy_find_element(By.XPATH, self.continue_xq)
